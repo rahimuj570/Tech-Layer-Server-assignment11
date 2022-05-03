@@ -30,6 +30,7 @@ async function run() {
       res.send(product);
     });
   } finally {
+    //
   }
 }
 run();
