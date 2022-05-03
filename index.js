@@ -37,6 +37,15 @@ async function run() {
       res.send(result);
     });
 
+    // ========= Specific Product API =======
+    app.get("/user/:rating", async (req, res) => {
+      const rating = req.params;
+      const query = { rating: rating.rating };
+      const cursor = await productCollection.find(query);
+      const product = await cursor.toArray();
+      res.send(product);
+    });
+
     //
   } finally {
   }
