@@ -46,6 +46,14 @@ async function run() {
       res.send(product);
     });
 
+    // ========= Delete Product API =======
+    app.get("/delete/:rating", async (req, res) => {
+      const rating = req.params;
+      const query = { rating: rating.rating };
+      const result = await productCollection.deleteOne(query);
+      res.send(result);
+    });
+
     //
   } finally {
   }
