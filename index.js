@@ -29,6 +29,15 @@ async function run() {
       const product = await cursor.toArray();
       res.send(product);
     });
+
+    // ========= Add API =======
+    app.get("/add", async (req, res) => {
+      const data = req.body;
+      const result = productCollection.insertOne(data);
+      res.send(result);
+    });
+
+    //
   } finally {
   }
 }
