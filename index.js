@@ -22,18 +22,17 @@ async function run() {
     await client.connect();
     const productCollection = client.db("productsData").collection("product");
 
-    // ========= API =======
+    // ========= Show API =======
     app.get("/", async (req, res) => {
-      const q = {};
-      const cursor = productCollection.find(q);
+      const query = {};
+      const cursor = productCollection.find(query);
       const product = await cursor.toArray();
       res.send(product);
     });
   } finally {
-    //
   }
 }
-run();
+run().catch(console.dir);
 
 // ========== Listening =======
 app.listen(port, () => {
