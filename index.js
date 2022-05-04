@@ -62,9 +62,10 @@ async function run() {
     });
 
     // ========= Delete Product API =======
-    app.get("/delete/:rating", async (req, res) => {
-      const rating = req.params;
-      const query = { rating: rating.rating };
+    app.delete("/delete/:id", async (req, res) => {
+      const id = req.params;
+      console.log(id);
+      const query = { _id: ObjectID(id) };
       const result = await productCollection.deleteOne(query);
       res.send(result);
     });
