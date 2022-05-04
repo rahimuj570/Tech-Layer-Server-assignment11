@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion } = require("mongodb");
+const { ObjectID } = require("bson");
 require("dotenv").config();
 const port = process.env.PORT || 5000;
 const app = express();
@@ -42,12 +43,21 @@ async function run() {
       res.send(result);
     });
 
-    // ========= Specific Product API =======
+    // ========= Specific User Product API =======
     app.get("/user/:rating", async (req, res) => {
       const rating = req.params;
       const query = { rating: rating.rating };
       const cursor = await productCollection.find(query);
       const product = await cursor.toArray();
+      res.send(product);
+    });
+
+    // ========= Specific Product API =======
+    app.get("/product/:id", async (req, res) => {
+      const id = req.params;
+      console.log(id);
+      const query = { _id: ObjectID(id) };
+      const product = await productCollection.findOne(query);
       res.send(product);
     });
 
@@ -60,11 +70,20 @@ async function run() {
     });
 
     // ========= Update Product API =======
-    app.get("/update/:rating", async (req, res) => {
-      const newData = req.body;
-      console.log(newData);
-      const rating = req.params;
-      const query = { rating: rating.rating };
+    app.put("/update/:id", async (req, res) => {
+      const { name, quantity, price, image, supplier, info } = req.body;
+      const newData = {
+        $set: {
+          name,
+          quantity,
+          price,
+          image,
+          supplier,
+          info,
+        },
+      };
+      const id = req.params;
+      const query = { _id: ObjectID(id) };
       const options = { upsert: true };
       const result = await productCollection.updateOne(query, newData, options);
       res.send(result);
