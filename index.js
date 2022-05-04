@@ -24,6 +24,10 @@ async function run() {
 
     // ========= Show API =======
     app.get("/", async (req, res) => {
+      res.send("API is Running");
+    });
+
+    app.get("/product", async (req, res) => {
       const query = {};
       const cursor = productCollection.find(query);
       const product = await cursor.toArray();
@@ -31,8 +35,9 @@ async function run() {
     });
 
     // ========= Add API =======
-    app.get("/add", async (req, res) => {
+    app.post("/add", async (req, res) => {
       const data = req.body;
+      console.log(data);
       const result = productCollection.insertOne(data);
       res.send(result);
     });
@@ -51,6 +56,17 @@ async function run() {
       const rating = req.params;
       const query = { rating: rating.rating };
       const result = await productCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // ========= Update Product API =======
+    app.get("/update/:rating", async (req, res) => {
+      const newData = req.body;
+      console.log(newData);
+      const rating = req.params;
+      const query = { rating: rating.rating };
+      const options = { upsert: true };
+      const result = await productCollection.updateOne(query, newData, options);
       res.send(result);
     });
 
