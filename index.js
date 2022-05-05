@@ -54,12 +54,26 @@ async function run() {
     });
 
     // ========= Specific User Product API =======
-    app.get("/user/:rating", async (req, res) => {
-      const rating = req.params;
-      const query = { rating: rating.rating };
-      const cursor = await productCollection.find(query);
-      const product = await cursor.toArray();
-      res.send(product);
+    app.get("/userProducts", async (req, res) => {
+      const reqAuthorization = req.headers.authorization?.split(" ");
+      if (reqAuthorization) {
+        const uid = reqAuthorization?.[0];
+        const email = reqAuthorization?.[1];
+        const savedToken = reqAuthorization?.[2];
+        const decode = verifyToken(savedToken);
+        console.log(decode?.email);
+        console.log(email);
+
+        if (email === decode?.email?.email) {
+          const query = { uid: uid };
+          const cursor = await productCollection.find(query);
+          const product = await cursor.toArray();
+          res.send(product);
+        } else {
+          console.log("unaitor");
+          res.send([{ status: "unAuthorization" }]);
+        }
+      }
     });
 
     // ========= Specific Product API =======
@@ -84,8 +98,6 @@ async function run() {
     app.post("/login", async (req, res) => {
       const email = req.body;
       const token = jwt.sign({ email }, process.env.TOKEN);
-      console.log(email);
-      console.log(token);
       res.send({ token });
     });
 
@@ -119,3 +131,17 @@ run().catch(console.dir);
 app.listen(port, () => {
   console.log("Listening to port", port);
 });
+
+// ========= Verify Token =========
+function verifyToken(token) {
+  let email;
+  jwt.verify(token, process.env.TOKEN, function (err, decoded) {
+    if (err) {
+      email = "Unauthorized";
+    }
+    if (decoded) {
+      email = decoded;
+    }
+  });
+  return email;
+}
