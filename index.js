@@ -4,6 +4,7 @@ const { MongoClient, ServerApiVersion } = require("mongodb");
 const { ObjectID } = require("bson");
 require("dotenv").config();
 const port = process.env.PORT || 5000;
+const jwt = require("jsonwebtoken");
 const app = express();
 
 // ======== Middleware =========
@@ -23,11 +24,20 @@ async function run() {
     await client.connect();
     const productCollection = client.db("productsData").collection("product");
 
-    // ========= Show API =======
+    // ========= Init API =======
     app.get("/", async (req, res) => {
       res.send("API is Running");
     });
 
+    // ========= Show First 6 API =======
+    app.get("/product/home", async (req, res) => {
+      const query = {};
+      const cursor = productCollection.find(query).limit(6);
+      const product = await cursor.toArray();
+      res.send(product);
+    });
+
+    // ========= Show API =======
     app.get("/product", async (req, res) => {
       const query = {};
       const cursor = productCollection.find(query);
@@ -39,8 +49,8 @@ async function run() {
     app.post("/add", async (req, res) => {
       const data = req.body;
       console.log(data);
-      const result = productCollection.insertOne(data);
-      res.send(result);
+      const result = await productCollection.insertOne(data);
+      res.send({ result });
     });
 
     // ========= Specific User Product API =======
@@ -68,6 +78,15 @@ async function run() {
       const query = { _id: ObjectID(id) };
       const result = await productCollection.deleteOne(query);
       res.send(result);
+    });
+
+    // ========= Generate JWT ========
+    app.post("/login", async (req, res) => {
+      const email = req.body;
+      const token = jwt.sign({ email }, process.env.TOKEN);
+      console.log(email);
+      console.log(token);
+      res.send({ token });
     });
 
     // ========= Update Product API =======
