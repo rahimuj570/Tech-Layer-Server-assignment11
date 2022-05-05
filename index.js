@@ -70,7 +70,6 @@ async function run() {
           const product = await cursor.toArray();
           res.send(product);
         } else {
-          console.log("unaitor");
           res.send([{ status: "unAuthorization" }]);
         }
       }
