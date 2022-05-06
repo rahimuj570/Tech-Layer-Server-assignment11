@@ -48,7 +48,6 @@ async function run() {
     // ========= Add API =======
     app.post("/add", async (req, res) => {
       const data = req.body;
-      console.log(data);
       const result = await productCollection.insertOne(data);
       res.send({ result });
     });
@@ -61,8 +60,6 @@ async function run() {
         const email = reqAuthorization?.[1];
         const savedToken = reqAuthorization?.[2];
         const decode = verifyToken(savedToken);
-        console.log(decode?.email);
-        console.log(email);
 
         if (email === decode?.email?.email) {
           const query = { uid: uid };
@@ -78,7 +75,6 @@ async function run() {
     // ========= Specific Product API =======
     app.get("/product/:id", async (req, res) => {
       const id = req.params;
-      console.log(id);
       const query = { _id: ObjectID(id) };
       const product = await productCollection.findOne(query);
       res.send(product);
@@ -87,7 +83,6 @@ async function run() {
     // ========= Delete Product API =======
     app.delete("/delete/:id", async (req, res) => {
       const id = req.params;
-      console.log(id);
       const query = { _id: ObjectID(id) };
       const result = await productCollection.deleteOne(query);
       res.send(result);
