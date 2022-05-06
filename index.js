@@ -24,11 +24,6 @@ async function run() {
     await client.connect();
     const productCollection = client.db("productsData").collection("product");
 
-    // ========= Init API =======
-    app.get("/", async (req, res) => {
-      res.send("API is Running");
-    });
-
     // ========= Show First 6 API =======
     app.get("/product/home", async (req, res) => {
       const query = {};
@@ -120,6 +115,11 @@ async function run() {
   }
 }
 run().catch(console.dir);
+
+// ========= Init API =======
+app.get("/", async (req, res) => {
+  res.send("API is Running");
+});
 
 // ========== Listening =======
 app.listen(port, () => {
